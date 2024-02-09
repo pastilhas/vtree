@@ -6,7 +6,7 @@ struct Node[T] {
 mut:
 	right &Node[T] = unsafe { 0 }
 	left  &Node[T] = unsafe { 0 }
-	bf    u8
+	bf    i8
 }
 
 fn new_node[T](k &T) &Node[T] {

@@ -74,70 +74,38 @@ pub fn (mut t Tree[T]) insert(k &T) bool {
 	}
 
 	mut n := new_node(k)
+	t.size++
+
+	if unsafe { y == 0 } {
+		t.root = n
+		return true
+	}
+
 	if dir {
 		q.right = n
 	} else {
 		q.left = n
 	}
 
-	t.size++
+	p = y
+	a = 0
 
-	if unsafe { y == 0 } {
-		return true
+	for p != n {
+		if da[a] {
+			p.bf++
+		} else {
+			p.bf--
+		}
+
+		p = if da[a] {
+			p.right
+		} else {
+			p.left
+		}
+		a++
 	}
 
 	mut w := &Node(unsafe { 0 })
 
-	return true
-}
-
-pub fn (mut t Tree[T]) remove(k &T) bool {
-	mut p := t.root
-	mut q := &Node(unsafe { 0 })
-	mut cmp := 0
-
-	assert unsafe { k != 0 }
-
-	for unsafe { p != 0 } {
-		cmp = t.cmp(k, p.data)
-
-		if cmp < 0 {
-			q = p
-			p = p.left
-		} else if cmp > 0 {
-			q = p
-			p = p.right
-		} else {
-			break
-		}
-	}
-
-	if unsafe { p == 0 } {
-		return false
-	}
-
-	if unsafe { p.right == 0 } {
-		t.add_child(q, p.left)
-	} else {
-		mut r := p.right
-		if unsafe { r.left == 0 } {
-			r.left = p.left
-			t.add_child(q, r)
-		} else {
-			mut s := r.left
-			for unsafe { s.left != 0 } {
-				s = s.left
-			}
-
-			r.left = s.right
-			s.left = p.left
-			s.right = p.right
-			t.add_child(q, s)
-		}
-	}
-
-	assert t.is_valid()
-
-	t.size--
 	return true
 }
