@@ -4,8 +4,8 @@ module bst
 struct Node[T] {
 	data &T
 mut:
-	right &Node[T] = unsafe { 0 }
 	left  &Node[T] = unsafe { 0 }
+	right &Node[T] = unsafe { 0 }
 }
 
 fn new_node[T](k &T) &Node[T] {
