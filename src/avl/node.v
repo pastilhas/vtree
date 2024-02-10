@@ -1,16 +1,16 @@
 module avl
 
 @[heap]
-struct Node[T] {
+struct AVLNode[T] {
 	data &T
 mut:
-	right &Node[T] = unsafe { 0 }
-	left  &Node[T] = unsafe { 0 }
+	left  &AVLNode[T] = unsafe { 0 }
+	right &AVLNode[T] = unsafe { 0 }
 	bf    i8
 }
 
-fn new_node[T](k &T) &Node[T] {
-	return &Node[T]{
+fn new_node[T](k &T) &AVLNode[T] {
+	return &AVLNode[T]{
 		data: unsafe { k }
 	}
 }
