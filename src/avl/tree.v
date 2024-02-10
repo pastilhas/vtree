@@ -41,16 +41,23 @@ pub fn (t &Tree[T]) exists(k &T) bool {
 }
 
 pub fn (mut t Tree[T]) insert(k &T) bool {
+	if unsafe { t.root == 0 } {
+		t.root = new_node(k)
+		t.size++
+		return true
+	}
+
 	mut z := t.root
 	mut y := t.root
 	mut q := z
 	mut p := y
 	mut dir := false
 	mut da := []bool{cap: avl.max_height}
-	mut a := 0
 
 	for unsafe { p != 0 } {
 		cmp := t.cmp(k, p.data)
+		dir = cmp > 0
+		da << dir
 
 		if cmp == 0 {
 			return false
@@ -59,27 +66,15 @@ pub fn (mut t Tree[T]) insert(k &T) bool {
 		if p.bf != 0 {
 			z = q
 			y = p
-			a = 0
+			da.clear()
 		}
-
-		dir = cmp > 0
-		da[a++] = dir
 
 		q = p
-		p = if dir {
-			p.right
-		} else {
-			p.left
-		}
+		p = next[T](p, dir)
 	}
 
 	mut n := new_node(k)
 	t.size++
-
-	if unsafe { y == 0 } {
-		t.root = n
-		return true
-	}
 
 	if dir {
 		q.right = n
@@ -88,9 +83,8 @@ pub fn (mut t Tree[T]) insert(k &T) bool {
 	}
 
 	p = y
-	a = 0
 
-	for p != n {
+	for a := 0; p != n; a++ {
 		if da[a] {
 			p.bf++
 		} else {
@@ -102,10 +96,17 @@ pub fn (mut t Tree[T]) insert(k &T) bool {
 		} else {
 			p.left
 		}
-		a++
 	}
 
 	mut w := &Node(unsafe { 0 })
 
 	return true
+}
+
+fn next[T](p &Node[T], dir bool) &Node[T] {
+	return if dir {
+		p.right
+	} else {
+		p.left
+	}
 }
