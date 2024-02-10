@@ -1,6 +1,6 @@
 module bst
 
-pub fn (mut t Tree[T]) insert[T](k &T) bool {
+pub fn (mut t BSTree[T]) insert[T](k &T) bool {
 	assert unsafe { k != 0 }
 
 	if unsafe { t.root == 0 } {
@@ -27,10 +27,10 @@ pub fn (mut t Tree[T]) insert[T](k &T) bool {
 
 	t.size++
 	n := new_node(k)
-	if t.cmp(k, q.data) > 0 {
-		q.right = n
-	} else {
+	if t.cmp(k, q.data) < 0 {
 		q.left = n
+	} else {
+		q.right = n
 	}
 
 	assert t.is_valid()

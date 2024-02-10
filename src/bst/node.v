@@ -1,15 +1,15 @@
 module bst
 
 @[heap]
-struct Node[T] {
+struct BSTNode[T] {
 	data &T
 mut:
-	left  &Node[T] = unsafe { 0 }
-	right &Node[T] = unsafe { 0 }
+	left  &BSTNode[T] = unsafe { 0 }
+	right &BSTNode[T] = unsafe { 0 }
 }
 
-fn new_node[T](k &T) &Node[T] {
-	return &Node[T]{
+fn new_node[T](k &T) &BSTNode[T] {
+	return &BSTNode[T]{
 		data: unsafe { k }
 	}
 }

@@ -1,13 +1,13 @@
 module bst
 
-pub fn (mut t Tree[T]) remove[T](k &T) bool {
+pub fn (mut t BSTree[T]) remove[T](k &T) bool {
 	assert unsafe { k != 0 }
 
 	if unsafe { t.root == 0 } {
 		return false
 	}
 
-	mut q := &Node(unsafe { 0 })
+	mut q := &BSTNode(unsafe { 0 })
 	mut p := t.root
 	mut cmp := 0
 	for unsafe { p != 0 } {
@@ -49,7 +49,7 @@ pub fn (mut t Tree[T]) remove[T](k &T) bool {
 	return true
 }
 
-fn (mut t Tree[T]) replace_right[T](mut q Node[T], p Node[T], cmp int) {
+fn (mut t BSTree[T]) replace_right[T](mut q BSTNode[T], p BSTNode[T], cmp int) {
 	mut r := p.right
 	if unsafe { r.left == 0 } {
 		r.left = p.left

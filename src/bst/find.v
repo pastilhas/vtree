@@ -1,6 +1,6 @@
 module bst
 
-pub fn (t &Tree[T]) find[T](k &T) ?&T {
+pub fn (t &BSTree[T]) find[T](k &T) ?&T {
 	assert unsafe { k != 0 }
 
 	mut p := t.root
@@ -21,7 +21,7 @@ pub fn (t &Tree[T]) find[T](k &T) ?&T {
 	return none
 }
 
-pub fn (t &Tree[T]) exists[T](k &T) bool {
+pub fn (t &BSTree[T]) exists[T](k &T) bool {
 	t.find(k) or { return false }
 	return true
 }

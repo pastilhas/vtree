@@ -1,12 +1,12 @@
 module bst
 
-pub fn (mut t Tree[T]) balance[T]() {
+pub fn (mut t BSTree[T]) balance[T]() {
 	if unsafe { t.root == 0 } {
 		return
 	}
 
 	// tree to vine
-	mut q := &Node(unsafe { 0 })
+	mut q := &BSTNode(unsafe { 0 })
 	mut p := t.root
 	for unsafe { p != 0 } {
 		if unsafe { p.right == 0 } {
@@ -50,7 +50,7 @@ pub fn (mut t Tree[T]) balance[T]() {
 	assert t.is_valid()
 }
 
-fn (mut t Tree[T]) compress[T](c usize) {
+fn (mut t BSTree[T]) compress[T](c usize) {
 	mut n := t.root
 	for i := 0; i < c; i++ {
 		mut r := n.left
