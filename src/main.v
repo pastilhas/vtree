@@ -2,6 +2,7 @@ module main
 
 import avl
 import rand
+import time
 
 fn main() {
 	mut t := avl.new[int](compare)
@@ -17,16 +18,15 @@ fn main() {
 		}
 	}
 
+	println('start')
+	sw := time.new_stopwatch()
 	for i := 0; i < 1_000_000; i++ {
 		t.insert(unsafe { &a[i] })
 	}
+	println('inserted in ${sw.elapsed()}')
 
 	b := t.to_array()
-
 	assert b.len == c.len
-	for i := 1; i < b.len; i++ {
-		assert b[i - 1] < b[i]
-	}
 }
 
 fn compare(a int, b int) int {

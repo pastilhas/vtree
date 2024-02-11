@@ -77,6 +77,7 @@ pub fn (mut t AVLTree[T]) balance[T](mut z AVLNode[T], mut y AVLNode[T]) {
 	}
 
 	if y == t.root {
+		t.root = w
 		return
 	}
 
