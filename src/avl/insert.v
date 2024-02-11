@@ -67,7 +67,7 @@ pub fn (mut t AVLTree[T]) insert[T](k &T) bool {
 	return true
 }
 
-pub fn (mut t AVLTree[T]) balance[T](mut z AVLNode[T], mut y AVLNode[T]) {
+fn (mut t AVLTree[T]) balance[T](mut z AVLNode[T], mut y AVLNode[T]) {
 	w := if y.bf == -2 {
 		t.balance_left(mut y)
 	} else if y.bf == 2 {
@@ -88,58 +88,42 @@ pub fn (mut t AVLTree[T]) balance[T](mut z AVLNode[T], mut y AVLNode[T]) {
 	}
 }
 
-pub fn (mut t AVLTree[T]) balance_left[T](mut y AVLNode[T]) &AVLNode[T] {
+fn (mut t AVLTree[T]) balance_left[T](mut y AVLNode[T]) &AVLNode[T] {
 	mut x := y.left
 
 	if x.bf == -1 {
-		y.left = x.right
-		x.right = y
-		x.bf = 0
-		y.bf = 0
-
-		return x
+		return t.rotate_right(mut y)
 	}
 
-	mut w := x.right
-	x.right = w.left
-	w.left = x
-	y.left = w.right
-	w.right = y
-
-	if w.bf == -1 {
-		x.bf = 0
-		y.bf = 1
-	} else if w.bf == 0 {
-		x.bf = 0
-		y.bf = 0
-	} else {
-		x.bf = -1
-		y.bf = 0
-	}
-
-	w.bf = 0
-
-	return w
+	return t.double_rotate_right(mut y)
 }
 
-pub fn (mut t AVLTree[T]) balance_right[T](mut y AVLNode[T]) &AVLNode[T] {
+fn (mut t AVLTree[T]) balance_right[T](mut y AVLNode[T]) &AVLNode[T] {
 	mut x := y.right
 
 	if x.bf == 1 {
-		y.right = x.left
-		x.left = y
-		x.bf = 0
-		y.bf = 0
-
-		return x
+		return t.rotate_left(mut y)
 	}
 
+	return t.double_rotate_left(mut y)
+}
+
+fn (mut t AVLTree[T]) rotate_left[T](mut y AVLNode[T]) &AVLNode[T] {
+	mut x := y.right
+	y.right = x.left
+	x.left = y
+	x.bf = 0
+	y.bf = 0
+	return x
+}
+
+fn (mut t AVLTree[T]) double_rotate_left[T](mut y AVLNode[T]) &AVLNode[T] {
+	mut x := y.right
 	mut w := x.left
 	x.left = w.right
 	w.right = x
 	y.right = w.left
 	w.left = y
-
 	if w.bf == 1 {
 		x.bf = 0
 		y.bf = -1
@@ -150,8 +134,36 @@ pub fn (mut t AVLTree[T]) balance_right[T](mut y AVLNode[T]) &AVLNode[T] {
 		x.bf = 1
 		y.bf = 0
 	}
-
 	w.bf = 0
+	return w
+}
 
+fn (mut t AVLTree[T]) rotate_right[T](mut y AVLNode[T]) &AVLNode[T] {
+	mut x := y.left
+	y.left = x.right
+	x.right = y
+	x.bf = 0
+	y.bf = 0
+	return x
+}
+
+fn (mut t AVLTree[T]) double_rotate_right[T](mut y AVLNode[T]) &AVLNode[T] {
+	mut x := y.left
+	mut w := x.right
+	x.right = w.left
+	w.left = x
+	y.left = w.right
+	w.right = y
+	if w.bf == -1 {
+		x.bf = 0
+		y.bf = 1
+	} else if w.bf == 0 {
+		x.bf = 0
+		y.bf = 0
+	} else {
+		x.bf = -1
+		y.bf = 0
+	}
+	w.bf = 0
 	return w
 }
