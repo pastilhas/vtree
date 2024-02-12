@@ -1,6 +1,6 @@
 module avl
 
-const max_height = 92
+const max_height = 32
 
 struct AVLTree[T] {
 mut:
@@ -16,10 +16,13 @@ pub fn new[T](cmp fn (T, T) int) AVLTree[T] {
 }
 
 pub fn (t AVLTree[T]) to_array[T]() []T {
+	if unsafe { t.root == 0 } {
+		return []T{}
+	}
 	return t.in_order(t.root)
 }
 
-fn (t AVLTree[T]) is_valid() bool {
+fn (t AVLTree[T]) is_valid[T]() bool {
 	return unsafe { t.root == 0 } || t.node_is_valid(t.root)
 }
 

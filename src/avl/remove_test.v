@@ -1,4 +1,4 @@
-module pavl
+module avl
 
 fn compare_f64(a f64, b f64) int {
 	return if a < b {

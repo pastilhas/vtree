@@ -8,21 +8,17 @@ pub fn (mut t AVLTree[T]) remove[T](k &T) bool {
 	}
 
 	mut p := t.root
-	mut cmp := 0
-	mut pa := []&AVLNode[T]{cap: max_height}
-	mut da := []bool{cap: max_height}
+	mut d := false
 
 	for unsafe { p != 0 } {
-		cmp = t.cmp(k, p.data)
+		cmp := t.cmp(k, p.data)
 
 		if cmp == 0 {
 			break
 		}
 
-		pa << p
-		da << cmp < 0
-
-		if cmp < 0 {
+		d = cmp < 0
+		if d {
 			p = p.left
 		} else {
 			p = p.right
@@ -34,141 +30,75 @@ pub fn (mut t AVLTree[T]) remove[T](k &T) bool {
 	}
 
 	t.size--
+	mut q := p.parent
 	if unsafe { p.right == 0 } {
-		mut l := pa.last()
-		if da.last() {
-			l.left = p.left
+		if unsafe { q != 0 } {
+			if d {
+				q.left = p.left
+				if unsafe { q.left != 0 } {
+					q.left.parent = q
+				}
+			} else {
+				q.right = p.left
+				if unsafe { q.right != 0 } {
+					q.right.parent = q
+				}
+			}
 		} else {
-			l.right = p.left
+			t.root = p.left
 		}
 	} else {
 		mut r := p.right
-
 		if unsafe { r.left == 0 } {
 			r.left = p.left
-			r.bf = p.bf
-
-			mut l := pa.last()
-			d := da.last()
-
-			if d {
-				l.left = r
-			} else {
-				l.right = r
+			if unsafe { r.left != 0 } {
+				r.left.parent = r
 			}
 
-			pa << r
-			da << false
+			if unsafe { q != 0 } {
+				if d {
+					q.left = r
+					r.parent = q
+				} else {
+					q.right = r
+					r.parent = q
+				}
+			} else {
+				t.root = r
+			}
 		} else {
-			j := pa.len
-			pa << &AVLNode[T](unsafe { 0 })
-			da << false
-			pa << r
-			da << true
 			mut s := r.left
-
 			for unsafe { s.left != 0 } {
-				r = s
-				pa << r
-				da << true
-				s = r.left
+				s = s.left
+			}
+			r = s.parent
+
+			r.left = s.right
+			if unsafe { r.left != 0 } {
+				r.left.parent = r
 			}
 
 			s.left = p.left
-			r.left = s.right
+			if unsafe { s.left != 0 } {
+				s.left.parent = r
+			}
+
 			s.right = p.right
-			s.bf = p.bf
+			s.right.parent = s
 
-			mut w := pa[j - 1]
-			if da[j - 1] {
-				w.left = s
+			if unsafe { q != 0 } {
+				if d {
+					q.left = s
+					s.parent = q
+				} else {
+					q.right = s
+					s.parent = q
+				}
 			} else {
-				w.right = s
+				t.root = s
 			}
-
-			pa[j] = s
-			da[j] = false
 		}
 	}
 
-	mut i := pa.len - 1
-	for i > 0 {
-		mut y := pa[i]
-		if da[i] {
-			y.bf++
-			if y.bf == 1 {
-				break
-			} else if y.bf == 2 {
-				mut x := y.right
-				if x.bf == -1 {
-					w := t.double_rotate_left(mut y)
-					mut z := pa[i - 1]
-					if da[i - 1] {
-						z.left = w
-					} else {
-						z.right = w
-					}
-				} else {
-					y.right = x.left
-					x.left = y
-					mut z := pa[i - 1]
-
-					if da[i - 1] {
-						z.left = x
-					} else {
-						z.right = x
-					}
-
-					if x.bf == 0 {
-						x.bf = -1
-						y.bf = 1
-						break
-					} else {
-						x.bf = 0
-						y.bf = 0
-					}
-				}
-			}
-		} else {
-			y.bf--
-			if y.bf == -1 {
-				break
-			} else if y.bf == -2 {
-				mut x := y.left
-				if x.bf == 1 {
-					w := t.double_rotate_right(mut y)
-					mut z := pa[i - 1]
-					if da[i - 1] {
-						z.left = w
-					} else {
-						z.right = w
-					}
-				} else {
-					y.left = x.right
-					x.right = y
-
-					mut z := pa[i - 1]
-					if da[i - 1] {
-						z.left = x
-					} else {
-						z.right = x
-					}
-
-					if x.bf == 0 {
-						x.bf = 1
-						y.bf = -1
-						break
-					} else {
-						x.bf = 0
-						y.bf = 0
-					}
-				}
-			}
-		}
-
-		i--
-	}
-
-	assert t.is_valid()
 	return true
 }

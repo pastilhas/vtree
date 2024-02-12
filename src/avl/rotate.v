@@ -1,6 +1,6 @@
-module pavl
+module avl
 
-fn (mut t PAVLTree[T]) rotate_left[T](mut y PAVLNode[T]) {
+fn (mut t AVLTree[T]) rotate_left[T](mut y AVLNode[T]) {
 	mut x := y.right
 	mut z := y.parent
 
@@ -27,7 +27,7 @@ fn (mut t PAVLTree[T]) rotate_left[T](mut y PAVLNode[T]) {
 	y.bf = 0
 }
 
-fn (mut t PAVLTree[T]) double_rotate_left[T](mut y PAVLNode[T]) {
+fn (mut t AVLTree[T]) double_rotate_left[T](mut y AVLNode[T]) {
 	mut z := y.parent
 	mut x := y.right
 	mut w := x.left
@@ -72,7 +72,7 @@ fn (mut t PAVLTree[T]) double_rotate_left[T](mut y PAVLNode[T]) {
 	w.bf = 0
 }
 
-fn (mut t PAVLTree[T]) rotate_right[T](mut y PAVLNode[T]) {
+fn (mut t AVLTree[T]) rotate_right[T](mut y AVLNode[T]) {
 	mut x := y.left
 	mut z := y.parent
 
@@ -99,7 +99,7 @@ fn (mut t PAVLTree[T]) rotate_right[T](mut y PAVLNode[T]) {
 	y.bf = 0
 }
 
-fn (mut t PAVLTree[T]) double_rotate_right[T](mut y PAVLNode[T]) {
+fn (mut t AVLTree[T]) double_rotate_right[T](mut y AVLNode[T]) {
 	mut z := y.parent
 	mut x := y.left
 	mut w := x.right

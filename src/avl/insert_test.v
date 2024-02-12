@@ -1,4 +1,4 @@
-module pavl
+module avl
 
 fn test_insert_one() {
 	mut t := new[f64](compare_f64)

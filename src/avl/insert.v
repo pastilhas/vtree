@@ -9,11 +9,9 @@ pub fn (mut t AVLTree[T]) insert[T](k &T) bool {
 		return true
 	}
 
-	mut z := t.root
 	mut y := t.root
-	mut q := z
-	mut p := y
-	mut s := []bool{cap: max_height}
+	mut q := t.root
+	mut p := t.root
 	mut cmp := 0
 
 	for unsafe { p != 0 } {
@@ -24,12 +22,9 @@ pub fn (mut t AVLTree[T]) insert[T](k &T) bool {
 		}
 
 		if p.bf != 0 {
-			z = q
 			y = p
-			s.clear()
 		}
 
-		s << (cmp < 0)
 		q = p
 		if cmp < 0 {
 			p = p.left
@@ -40,130 +35,55 @@ pub fn (mut t AVLTree[T]) insert[T](k &T) bool {
 
 	t.size++
 	mut n := new_node(k)
+	n.parent = q
 	if cmp < 0 {
 		q.left = n
 	} else {
 		q.right = n
 	}
 
-	p = y
-	for a := 0; p != n; a++ {
-		if s[a] {
-			p.bf--
+	p = n
+	for p != y {
+		q = p.parent
+
+		if unsafe { q.left != 0 } && q.left == p {
+			q.bf--
 		} else {
-			p.bf++
+			q.bf++
 		}
 
-		if s[a] {
-			p = p.left
-		} else {
-			p = p.right
-		}
+		p = q
 	}
 
-	t.balance(mut z, mut y)
+	t.balance(mut y)
 
-	assert t.is_valid()
 	return true
 }
 
-fn (mut t AVLTree[T]) balance[T](mut z AVLNode[T], mut y AVLNode[T]) {
-	w := if y.bf == -2 {
+fn (mut t AVLTree[T]) balance[T](mut y AVLNode[T]) {
+	if y.bf == -2 {
 		t.balance_left(mut y)
 	} else if y.bf == 2 {
 		t.balance_right(mut y)
-	} else {
-		return
-	}
-
-	if y == t.root {
-		t.root = w
-		return
-	}
-
-	if z.left == y {
-		z.left = w
-	} else {
-		z.right = w
 	}
 }
 
-fn (mut t AVLTree[T]) balance_left[T](mut y AVLNode[T]) &AVLNode[T] {
+fn (mut t AVLTree[T]) balance_left[T](mut y AVLNode[T]) {
 	mut x := y.left
 
 	if x.bf == -1 {
-		return t.rotate_right(mut y)
+		t.rotate_right(mut y)
+	} else {
+		t.double_rotate_right(mut y)
 	}
-
-	return t.double_rotate_right(mut y)
 }
 
-fn (mut t AVLTree[T]) balance_right[T](mut y AVLNode[T]) &AVLNode[T] {
+fn (mut t AVLTree[T]) balance_right[T](mut y AVLNode[T]) {
 	mut x := y.right
 
 	if x.bf == 1 {
-		return t.rotate_left(mut y)
-	}
-
-	return t.double_rotate_left(mut y)
-}
-
-fn (mut t AVLTree[T]) rotate_left[T](mut y AVLNode[T]) &AVLNode[T] {
-	mut x := y.right
-	y.right = x.left
-	x.left = y
-	x.bf = 0
-	y.bf = 0
-	return x
-}
-
-fn (mut t AVLTree[T]) double_rotate_left[T](mut y AVLNode[T]) &AVLNode[T] {
-	mut x := y.right
-	mut w := x.left
-	x.left = w.right
-	w.right = x
-	y.right = w.left
-	w.left = y
-	if w.bf == 1 {
-		x.bf = 0
-		y.bf = -1
-	} else if w.bf == 0 {
-		x.bf = 0
-		y.bf = 0
+		t.rotate_left(mut y)
 	} else {
-		x.bf = 1
-		y.bf = 0
+		t.double_rotate_left(mut y)
 	}
-	w.bf = 0
-	return w
-}
-
-fn (mut t AVLTree[T]) rotate_right[T](mut y AVLNode[T]) &AVLNode[T] {
-	mut x := y.left
-	y.left = x.right
-	x.right = y
-	x.bf = 0
-	y.bf = 0
-	return x
-}
-
-fn (mut t AVLTree[T]) double_rotate_right[T](mut y AVLNode[T]) &AVLNode[T] {
-	mut x := y.left
-	mut w := x.right
-	x.right = w.left
-	w.left = x
-	y.left = w.right
-	w.right = y
-	if w.bf == -1 {
-		x.bf = 0
-		y.bf = 1
-	} else if w.bf == 0 {
-		x.bf = 0
-		y.bf = 0
-	} else {
-		x.bf = -1
-		y.bf = 0
-	}
-	w.bf = 0
-	return w
 }
