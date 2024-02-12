@@ -18,11 +18,7 @@ pub fn (mut t AVLTree[T]) remove[T](k &T) bool {
 		}
 
 		d = cmp < 0
-		if d {
-			p = p.left
-		} else {
-			p = p.right
-		}
+		p = p.next(d)
 	}
 
 	if unsafe { p == 0 } {
@@ -30,42 +26,13 @@ pub fn (mut t AVLTree[T]) remove[T](k &T) bool {
 	}
 
 	t.size--
-	mut q := p.parent
 	if unsafe { p.right == 0 } {
-		if unsafe { q != 0 } {
-			if d {
-				q.left = p.left
-				if unsafe { q.left != 0 } {
-					q.left.parent = q
-				}
-			} else {
-				q.right = p.left
-				if unsafe { q.right != 0 } {
-					q.right.parent = q
-				}
-			}
-		} else {
-			t.root = p.left
-		}
+		t.switch_parent(p, p.left, d)
 	} else {
 		mut r := p.right
 		if unsafe { r.left == 0 } {
-			r.left = p.left
-			if unsafe { r.left != 0 } {
-				r.left.parent = r
-			}
-
-			if unsafe { q != 0 } {
-				if d {
-					q.left = r
-					r.parent = q
-				} else {
-					q.right = r
-					r.parent = q
-				}
-			} else {
-				t.root = r
-			}
+			r.set_child(p.left, true)
+			t.switch_parent(p, r, d)
 		} else {
 			mut s := r.left
 			for unsafe { s.left != 0 } {
@@ -73,30 +40,10 @@ pub fn (mut t AVLTree[T]) remove[T](k &T) bool {
 			}
 			r = s.parent
 
-			r.left = s.right
-			if unsafe { r.left != 0 } {
-				r.left.parent = r
-			}
-
-			s.left = p.left
-			if unsafe { s.left != 0 } {
-				s.left.parent = r
-			}
-
-			s.right = p.right
-			s.right.parent = s
-
-			if unsafe { q != 0 } {
-				if d {
-					q.left = s
-					s.parent = q
-				} else {
-					q.right = s
-					s.parent = q
-				}
-			} else {
-				t.root = s
-			}
+			r.set_child(s.right, true)
+			s.set_child(p.left, true)
+			s.set_child(p.right, false)
+			t.switch_parent(p, s, d)
 		}
 	}
 
