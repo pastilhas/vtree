@@ -1,6 +1,6 @@
 module avl
 
-pub fn (t &AVLTree[T]) find[T](k &T) ?&T {
+pub fn (t &AVLTree[T]) find[T](k &T) !&T {
 	assert unsafe { k != 0 }
 
 	mut p := t.root
@@ -11,14 +11,10 @@ pub fn (t &AVLTree[T]) find[T](k &T) ?&T {
 			return p.data
 		}
 
-		if cmp < 0 {
-			p = p.left
-		} else {
-			p = p.right
-		}
+		p = p.next(cmp < 0)
 	}
 
-	return none
+	return error('item not found')
 }
 
 pub fn (t &AVLTree[T]) exists[T](k &T) bool {

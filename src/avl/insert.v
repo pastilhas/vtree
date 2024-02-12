@@ -26,27 +26,18 @@ pub fn (mut t AVLTree[T]) insert[T](k &T) bool {
 		}
 
 		q = p
-		if cmp < 0 {
-			p = p.left
-		} else {
-			p = p.right
-		}
+		p = p.next(cmp < 0)
 	}
 
 	t.size++
 	mut n := new_node(k)
-	n.parent = q
-	if cmp < 0 {
-		q.left = n
-	} else {
-		q.right = n
-	}
+	q.add_child(mut n, cmp < 0)
 
 	p = n
 	for p != y {
 		q = p.parent
 
-		if unsafe { q.left != 0 } && q.left == p {
+		if q.is_left(p) {
 			q.bf--
 		} else {
 			q.bf++
@@ -69,21 +60,19 @@ fn (mut t AVLTree[T]) balance[T](mut y AVLNode[T]) {
 }
 
 fn (mut t AVLTree[T]) balance_left[T](mut y AVLNode[T]) {
-	mut x := y.left
-
-	if x.bf == -1 {
+	if y.left.bf == -1 {
 		t.rotate_right(mut y)
-	} else {
-		t.double_rotate_right(mut y)
+		return
 	}
+
+	t.double_rotate_right(mut y)
 }
 
 fn (mut t AVLTree[T]) balance_right[T](mut y AVLNode[T]) {
-	mut x := y.right
-
-	if x.bf == 1 {
+	if y.right.bf == 1 {
 		t.rotate_left(mut y)
-	} else {
-		t.double_rotate_left(mut y)
+		return
 	}
+
+	t.double_rotate_left(mut y)
 }
