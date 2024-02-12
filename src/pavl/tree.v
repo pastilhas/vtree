@@ -16,6 +16,9 @@ pub fn new[T](cmp fn (T, T) int) PAVLTree[T] {
 }
 
 pub fn (t PAVLTree[T]) to_array[T]() []T {
+	if unsafe { t.root == 0 } {
+		return []T{}
+	}
 	return t.in_order(t.root)
 }
 
