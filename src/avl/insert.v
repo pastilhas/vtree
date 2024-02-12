@@ -31,7 +31,7 @@ pub fn (mut t AVLTree[T]) insert[T](k &T) bool {
 
 	t.size++
 	mut n := new_node(k)
-	q.add_child(mut n, cmp < 0)
+	q.set_child(n, cmp < 0)
 
 	p = n
 	for p != y {

@@ -27,12 +27,12 @@ pub fn (mut t AVLTree[T]) remove[T](k &T) bool {
 
 	t.size--
 	if unsafe { p.right == 0 } {
-		t.switch_parent(p, p.left, d)
+		t.switch_parent(p, p.left)
 	} else {
 		mut r := p.right
 		if unsafe { r.left == 0 } {
-			r.set_child(p.left, true)
-			t.switch_parent(p, r, d)
+			r.set_left(p.left)
+			t.switch_parent(p, r)
 		} else {
 			mut s := r.left
 			for unsafe { s.left != 0 } {
@@ -40,10 +40,10 @@ pub fn (mut t AVLTree[T]) remove[T](k &T) bool {
 			}
 			r = s.parent
 
-			r.set_child(s.right, true)
-			s.set_child(p.left, true)
-			s.set_child(p.right, false)
-			t.switch_parent(p, s, d)
+			r.set_left(s.right)
+			s.set_left(p.left)
+			s.set_right(p.right)
+			t.switch_parent(p, s)
 		}
 	}
 
