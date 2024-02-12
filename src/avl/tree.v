@@ -47,3 +47,22 @@ fn (t AVLTree[T]) in_order[T](n &AVLNode[T]) []T {
 
 	return res
 }
+
+fn (mut t AVLTree[T]) switch_parent[T](p &AVLNode[T], n &AVLNode[T], left bool) {
+	mut q := p.parent
+	if unsafe { q != 0 } {
+		if left {
+			q.left = n
+			if unsafe { q.left != 0 } {
+				q.left.parent = q
+			}
+		} else {
+			q.right = n
+			if unsafe { q.right != 0 } {
+				q.right.parent = q
+			}
+		}
+	} else {
+		t.root = n
+	}
+}
