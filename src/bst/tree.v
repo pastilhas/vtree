@@ -1,7 +1,5 @@
 module bst
 
-const max_height = 32
-
 struct BSTree[T] {
 mut:
 	cmp  fn (T, T) int @[required]

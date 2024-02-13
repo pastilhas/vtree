@@ -1,12 +1,10 @@
 module avl
 
-const max_height = 32
-
 struct AVLTree[T] {
 mut:
 	cmp  fn (T, T) int @[required]
 	root &AVLNode[T] = unsafe { 0 }
-	size usize
+	size u32
 }
 
 pub fn new[T](cmp fn (T, T) int) AVLTree[T] {
@@ -52,7 +50,11 @@ fn (mut t AVLTree[T]) switch_parent[T](p &AVLNode[T], n &AVLNode[T]) {
 	mut q := p.parent
 	if unsafe { q == 0 } {
 		t.root = n
-		t.root.parent = q
+
+		if unsafe { n != 0 } {
+			t.root.parent = q
+		}
+
 		return
 	}
 

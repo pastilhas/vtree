@@ -46,7 +46,6 @@ pub fn (mut t BSTree[T]) balance[T]() {
 		h++
 	}
 
-	assert h <= max_height
 	assert t.is_valid()
 }
 

@@ -11,7 +11,7 @@ pub fn (mut t AVLTree[T]) min[T]() !&T {
 fn (p AVLNode[T]) min[T]() &AVLNode[T] {
 	mut s := p.left
 	if unsafe { s == 0 } {
-		return p
+		return &p
 	}
 
 	for unsafe { s.left != 0 } {
