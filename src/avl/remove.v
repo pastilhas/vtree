@@ -34,10 +34,7 @@ pub fn (mut t AVLTree[T]) remove[T](k &T) bool {
 			r.set_left(p.left)
 			t.switch_parent(p, r)
 		} else {
-			mut s := r.left
-			for unsafe { s.left != 0 } {
-				s = s.left
-			}
+			mut s := r.min()
 			r = s.parent
 
 			r.set_left(s.right)
@@ -47,5 +44,6 @@ pub fn (mut t AVLTree[T]) remove[T](k &T) bool {
 		}
 	}
 
+	assert t.is_valid()
 	return true
 }

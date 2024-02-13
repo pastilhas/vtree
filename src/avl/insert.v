@@ -30,7 +30,7 @@ pub fn (mut t AVLTree[T]) insert[T](k &T) bool {
 	}
 
 	t.size++
-	mut n := new_node(k)
+	n := new_node(k)
 	q.set_child(n, cmp < 0)
 
 	p = n
@@ -48,6 +48,7 @@ pub fn (mut t AVLTree[T]) insert[T](k &T) bool {
 
 	t.balance(mut y)
 
+	assert t.is_valid()
 	return true
 }
 
