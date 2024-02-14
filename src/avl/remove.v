@@ -1,8 +1,6 @@
 module avl
 
-pub fn (mut t AVLTree[T]) remove[T](k &T) bool {
-	assert unsafe { k != 0 }
-
+pub fn (mut t Tree[T]) remove[T](k &T) bool {
 	if unsafe { t.root == 0 } {
 		return false
 	}
@@ -18,11 +16,7 @@ pub fn (mut t AVLTree[T]) remove[T](k &T) bool {
 		}
 
 		d = cmp < 0
-		if d {
-			p = p.left
-		} else {
-			p = p.right
-		}
+		p = t.next(p, d)
 	}
 
 	if unsafe { p == 0 } {
@@ -30,73 +24,25 @@ pub fn (mut t AVLTree[T]) remove[T](k &T) bool {
 	}
 
 	t.size--
-	mut q := p.parent
-	if unsafe { p.right == 0 } {
-		if unsafe { q != 0 } {
-			if d {
-				q.left = p.left
-				if unsafe { q.left != 0 } {
-					q.left.parent = q
-				}
-			} else {
-				q.right = p.left
-				if unsafe { q.right != 0 } {
-					q.right.parent = q
-				}
-			}
-		} else {
-			t.root = p.left
-		}
+	mut q := t.parent(p)
+	if unsafe { t.right(p) == 0 } {
+		t.set_parent(mut t.left(p), q, d)
 	} else {
-		mut r := p.right
-		if unsafe { r.left == 0 } {
-			r.left = p.left
-			if unsafe { r.left != 0 } {
-				r.left.parent = r
-			}
-
-			if unsafe { q != 0 } {
-				if d {
-					q.left = r
-					r.parent = q
-				} else {
-					q.right = r
-					r.parent = q
-				}
-			} else {
-				t.root = r
-			}
+		mut r := t.right(p)
+		if unsafe { t.left(r) == 0 } {
+			t.set_parent(mut r, q, d)
+			t.set_left(mut r, t.left(p))
 		} else {
-			mut s := r.left
-			for unsafe { s.left != 0 } {
-				s = s.left
+			mut s := t.left(r)
+			for unsafe { t.left(s) != 0 } {
+				s = t.left(s)
 			}
-			r = s.parent
+			r = t.parent(s)
 
-			r.left = s.right
-			if unsafe { r.left != 0 } {
-				r.left.parent = r
-			}
-
-			s.left = p.left
-			if unsafe { s.left != 0 } {
-				s.left.parent = r
-			}
-
-			s.right = p.right
-			s.right.parent = s
-
-			if unsafe { q != 0 } {
-				if d {
-					q.left = s
-					s.parent = q
-				} else {
-					q.right = s
-					s.parent = q
-				}
-			} else {
-				t.root = s
-			}
+			t.set_parent(mut s, q, d)
+			t.set_left(mut r, t.right(s))
+			t.set_left(mut s, t.left(p))
+			t.set_right(mut s, t.right(p))
 		}
 	}
 

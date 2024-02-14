@@ -1,63 +1,27 @@
 module avl
 
-fn (mut t AVLTree[T]) rotate_left[T](mut y AVLNode[T]) {
-	mut x := y.right
-	mut z := y.parent
+fn (mut t Tree[T]) rotate_left[T](mut y Node[T]) {
+	mut x := t.right(y)
+	mut z := t.parent(y)
 
-	x.parent = z
-	if unsafe { z != 0 } {
-		if t.cmp(x.data, z.data) < 0 {
-			z.left = x
-		} else {
-			z.right = x
-		}
-	} else {
-		t.root = x
-	}
-
-	y.right = x.left
-	if unsafe { y.right != 0 } {
-		y.right.parent = y
-	}
-
-	x.left = y
-	y.parent = x
+	t.set_parent(mut x, z, t.is_left(z, y))
+	t.set_right(mut y, t.left(x))
+	t.set_left(mut x, y)
 
 	x.bf = 0
 	y.bf = 0
 }
 
-fn (mut t AVLTree[T]) double_rotate_left[T](mut y AVLNode[T]) {
-	mut z := y.parent
-	mut x := y.right
-	mut w := x.left
+fn (mut t Tree[T]) double_rotate_left[T](mut y Node[T]) {
+	mut z := t.parent(y)
+	mut x := t.right(y)
+	mut w := t.left(x)
 
-	w.parent = z
-	if unsafe { z != 0 } {
-		if y == z.left {
-			z.left = w
-		} else {
-			z.right = w
-		}
-	} else {
-		t.root = w
-	}
-
-	x.left = w.right
-	if unsafe { x.left != 0 } {
-		x.left.parent = x
-	}
-
-	w.right = x
-	x.parent = w
-
-	y.right = w.left
-	if unsafe { y.right != 0 } {
-		y.right.parent = y
-	}
-
-	w.left = y
-	y.parent = w
+	t.set_parent(mut w, z, t.is_left(z, y))
+	t.set_left(mut x, t.right(w))
+	t.set_right(mut w, x)
+	t.set_right(mut y, t.left(w))
+	t.set_left(mut w, y)
 
 	if w.bf == 1 {
 		x.bf = 0
@@ -72,64 +36,28 @@ fn (mut t AVLTree[T]) double_rotate_left[T](mut y AVLNode[T]) {
 	w.bf = 0
 }
 
-fn (mut t AVLTree[T]) rotate_right[T](mut y AVLNode[T]) {
-	mut x := y.left
-	mut z := y.parent
+fn (mut t Tree[T]) rotate_right[T](mut y Node[T]) {
+	mut x := t.left(y)
+	mut z := t.parent(y)
 
-	x.parent = z
-	if unsafe { z != 0 } {
-		if y == z.left {
-			z.left = x
-		} else {
-			z.right = x
-		}
-	} else {
-		t.root = x
-	}
-
-	y.left = x.right
-	if unsafe { x.right != 0 } {
-		x.right.parent = y
-	}
-
-	x.right = y
-	y.parent = x
+	t.set_parent(mut x, z, t.is_left(z, y))
+	t.set_left(mut y, t.right(x))
+	t.set_right(mut x, y)
 
 	x.bf = 0
 	y.bf = 0
 }
 
-fn (mut t AVLTree[T]) double_rotate_right[T](mut y AVLNode[T]) {
-	mut z := y.parent
-	mut x := y.left
-	mut w := x.right
+fn (mut t Tree[T]) double_rotate_right[T](mut y Node[T]) {
+	mut z := t.parent(y)
+	mut x := t.left(y)
+	mut w := t.right(x)
 
-	w.parent = z
-	if unsafe { z != 0 } {
-		if y == z.left {
-			z.left = w
-		} else {
-			z.right = w
-		}
-	} else {
-		t.root = w
-	}
-
-	x.right = w.left
-	if unsafe { x.right != 0 } {
-		x.right.parent = x
-	}
-
-	w.left = x
-	x.parent = w
-
-	y.left = w.right
-	if unsafe { y.left != 0 } {
-		y.left.parent = y
-	}
-
-	w.right = y
-	y.parent = w
+	t.set_parent(mut w, z, t.is_left(z, y))
+	t.set_right(mut x, t.left(w))
+	t.set_left(mut w, x)
+	t.set_left(mut y, t.right(w))
+	t.set_right(mut w, y)
 
 	if w.bf == -1 {
 		x.bf = 0
