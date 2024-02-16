@@ -1,16 +1,16 @@
 module avl
 
 pub fn (t &Tree[T]) find[T](k &T) !&T {
-	if t.root == -1 {
+	if unsafe { t.root == 0 } {
 		return error('Tree is empty')
 	}
 
 	mut p := t.root
-	for p != -1 {
-		cmp := t.cmp(k, t.data(p))
+	for unsafe { p != 0 } {
+		cmp := t.cmp(k, p.data)
 
 		if cmp == 0 {
-			return t.data(p)
+			return p.data
 		}
 
 		p = t.next(p, cmp < 0)

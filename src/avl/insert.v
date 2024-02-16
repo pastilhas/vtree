@@ -1,8 +1,8 @@
 module avl
 
 pub fn (mut t Tree[T]) insert[T](k &T) bool {
-	if t.root == -1 {
-		t.root = t.new_node(k)
+	if unsafe { t.root == 0 } {
+		t.root = new_node(k)
 		t.size++
 		return true
 	}
@@ -11,8 +11,8 @@ pub fn (mut t Tree[T]) insert[T](k &T) bool {
 	mut q := t.root
 	mut p := t.root
 	mut d := false
-	for p != -1 {
-		cmp := t.cmp(k, t.data(p))
+	for unsafe { p != 0 } {
+		cmp := t.cmp(k, p.data)
 		d = cmp < 0
 
 		if cmp == 0 {
@@ -28,48 +28,48 @@ pub fn (mut t Tree[T]) insert[T](k &T) bool {
 	}
 
 	t.size++
-	mut n := t.new_node(k)
-	t.set_parent(n, q, d)
+	mut n := new_node(k)
+	t.set_parent(mut n, q, d)
 
 	p = n
 	for p != y {
 		q = t.parent(p)
 
 		if t.is_left(q, p) {
-			t.dec_bf(q)
+			t.dec_bf(mut q)
 		} else {
-			t.inc_bf(q)
+			t.inc_bf(mut q)
 		}
 
 		p = q
 	}
 
-	t.balance(y)
+	t.balance(mut y)
 	return true
 }
 
-fn (mut t Tree[T]) balance[T](y int) {
+fn (mut t Tree[T]) balance[T](mut y Node[T]) {
 	if t.bf(y) == -2 {
-		t.balance_left(y)
+		t.balance_left(mut y)
 	} else if t.bf(y) == 2 {
-		t.balance_right(y)
+		t.balance_right(mut y)
 	}
 }
 
-fn (mut t Tree[T]) balance_left[T](y int) {
-	x := t.left(y)
+fn (mut t Tree[T]) balance_left[T](mut y Node[T]) {
+	mut x := t.left(y)
 	if t.bf(x) == -1 {
-		t.rotate_right(y)
+		t.rotate_right(mut y)
 	} else {
-		t.double_rotate_right(y)
+		t.double_rotate_right(mut y)
 	}
 }
 
-fn (mut t Tree[T]) balance_right[T](y int) {
-	x := t.right(y)
+fn (mut t Tree[T]) balance_right[T](mut y Node[T]) {
+	mut x := t.right(y)
 	if t.bf(x) == 1 {
-		t.rotate_left(y)
+		t.rotate_left(mut y)
 	} else {
-		t.double_rotate_left(y)
+		t.double_rotate_left(mut y)
 	}
 }
