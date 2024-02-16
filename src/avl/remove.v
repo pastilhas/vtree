@@ -1,6 +1,6 @@
 module avl
 
-pub fn (mut t Tree[T]) remove[T](k &T) bool {
+pub fn (mut t Tree[T]) remove[T](k T) bool {
 	if unsafe { t.root == 0 } {
 		return false
 	}

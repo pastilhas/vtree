@@ -1,12 +1,11 @@
 module avl
 
-const max_height = 32
-
-struct Tree[T] {
+pub struct Tree[T] {
+pub mut:
+	size int
 mut:
 	cmp  fn (T, T) int @[required]
 	root &Node[T] = unsafe { 0 }
-	size usize
 }
 
 pub fn new[T](cmp fn (T, T) int) Tree[T] {
@@ -15,7 +14,7 @@ pub fn new[T](cmp fn (T, T) int) Tree[T] {
 	}
 }
 
-pub fn (t Tree[T]) to_array[T]() []T {
+pub fn (t Tree[T]) array[T]() []T {
 	if unsafe { t.root == 0 } {
 		return []T{}
 	}
@@ -40,30 +39,11 @@ fn (t Tree[T]) in_order[T](n &Node[T]) []T {
 		res << t.in_order(n.left)
 	}
 
-	res << *n.data
+	res << n.data
 
 	if unsafe { n.right != 0 } {
 		res << t.in_order(n.right)
 	}
 
 	return res
-}
-
-fn (mut t AVLTree[T]) switch_parent[T](p &AVLNode[T], n &AVLNode[T]) {
-	mut q := p.parent
-	if unsafe { q == 0 } {
-		t.root = n
-
-		if unsafe { n != 0 } {
-			t.root.parent = q
-		}
-
-		return
-	}
-
-	if q.is_left(p) {
-		q.set_left(n)
-	} else {
-		q.set_right(n)
-	}
 }

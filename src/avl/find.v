@@ -1,6 +1,6 @@
 module avl
 
-pub fn (t &Tree[T]) find[T](k &T) !&T {
+pub fn (t &Tree[T]) find[T](k T) !T {
 	if unsafe { t.root == 0 } {
 		return error('Tree is empty')
 	}
@@ -19,7 +19,7 @@ pub fn (t &Tree[T]) find[T](k &T) !&T {
 	return error('Item not found')
 }
 
-pub fn (t &Tree[T]) exists[T](k &T) bool {
+pub fn (t &Tree[T]) exists[T](k T) bool {
 	t.find(k) or { return false }
 	return true
 }

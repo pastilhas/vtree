@@ -1,6 +1,6 @@
 module bst
 
-pub fn (mut t BSTree[T]) remove[T](k &T) bool {
+pub fn (mut t BSTree[T]) remove[T](k T) bool {
 	assert unsafe { k != 0 }
 
 	if unsafe { t.root == 0 } {

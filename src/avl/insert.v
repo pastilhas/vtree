@@ -1,8 +1,8 @@
 module avl
 
-pub fn (mut t Tree[T]) insert[T](k &T) bool {
+pub fn (mut t Tree[T]) insert[T](k T) bool {
 	if unsafe { t.root == 0 } {
-		t.root = new_node(k)
+		t.root = t.new_node(k)
 		t.size++
 		return true
 	}
@@ -28,7 +28,7 @@ pub fn (mut t Tree[T]) insert[T](k &T) bool {
 	}
 
 	t.size++
-	mut n := new_node(k)
+	mut n := t.new_node(k)
 	t.set_parent(mut n, q, d)
 
 	p = n
@@ -45,6 +45,7 @@ pub fn (mut t Tree[T]) insert[T](k &T) bool {
 	}
 
 	t.balance(mut y)
+	assert t.is_valid()
 	return true
 }
 

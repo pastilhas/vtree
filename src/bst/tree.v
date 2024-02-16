@@ -34,7 +34,7 @@ fn (t BSTree[T]) in_order[T](n &BSTNode[T]) []T {
 		res << t.in_order(n.left)
 	}
 
-	res << *n.data
+	res << n.data
 
 	if unsafe { n.right != 0 } {
 		res << t.in_order(n.right)
