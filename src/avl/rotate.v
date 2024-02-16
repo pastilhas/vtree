@@ -1,69 +1,73 @@
 module avl
 
-fn (mut t AVLTree[T]) rotate_left[T](mut y AVLNode[T]) {
-	mut x := y.right
+fn (mut t Tree[T]) rotate_left[T](mut y Node[T]) {
+	mut x := t.right(y)
+	mut z := t.parent(y)
 
-	t.switch_parent(y, x)
-	y.set_right(x.left)
-	x.set_left(y)
+	t.set_parent(mut x, z, t.is_left(z, y))
+	t.set_right(mut y, t.left(x))
+	t.set_left(mut x, y)
 
-	x.bf = 0
-	y.bf = 0
+	t.set_bf(mut x, 0)
+	t.set_bf(mut y, 0)
 }
 
-fn (mut t AVLTree[T]) double_rotate_left[T](mut y AVLNode[T]) {
-	mut x := y.right
-	mut w := x.left
+fn (mut t Tree[T]) double_rotate_left[T](mut y Node[T]) {
+	mut z := t.parent(y)
+	mut x := t.right(y)
+	mut w := t.left(x)
 
-	t.switch_parent(y, w)
-	x.set_left(w.right)
-	w.set_right(x)
-	y.set_right(w.left)
-	w.set_left(y)
+	t.set_parent(mut w, z, t.is_left(z, y))
+	t.set_left(mut x, t.right(w))
+	t.set_right(mut w, x)
+	t.set_right(mut y, t.left(w))
+	t.set_left(mut w, y)
 
-	if w.bf == 1 {
-		x.bf = 0
-		y.bf = -1
-	} else if w.bf == 0 {
-		x.bf = 0
-		y.bf = 0
+	if t.bf(w) == 1 {
+		t.set_bf(mut x, 0)
+		t.set_bf(mut y, -1)
+	} else if t.bf(w) == 0 {
+		t.set_bf(mut x, 0)
+		t.set_bf(mut y, 0)
 	} else {
-		x.bf = 1
-		y.bf = 0
+		t.set_bf(mut x, 1)
+		t.set_bf(mut y, 0)
 	}
-	w.bf = 0
+	t.set_bf(mut w, 0)
 }
 
-fn (mut t AVLTree[T]) rotate_right[T](mut y AVLNode[T]) {
-	mut x := y.left
+fn (mut t Tree[T]) rotate_right[T](mut y Node[T]) {
+	mut x := t.left(y)
+	mut z := t.parent(y)
 
-	t.switch_parent(y, x)
-	y.set_left(x.right)
-	x.set_right(y)
+	t.set_parent(mut x, z, t.is_left(z, y))
+	t.set_left(mut y, t.right(x))
+	t.set_right(mut x, y)
 
-	x.bf = 0
-	y.bf = 0
+	t.set_bf(mut x, 0)
+	t.set_bf(mut y, 0)
 }
 
-fn (mut t AVLTree[T]) double_rotate_right[T](mut y AVLNode[T]) {
-	mut x := y.left
-	mut w := x.right
+fn (mut t Tree[T]) double_rotate_right[T](mut y Node[T]) {
+	mut z := t.parent(y)
+	mut x := t.left(y)
+	mut w := t.right(x)
 
-	t.switch_parent(y, w)
-	x.set_right(w.left)
-	w.set_left(x)
-	y.set_left(w.right)
-	w.set_right(y)
+	t.set_parent(mut w, z, t.is_left(z, y))
+	t.set_right(mut x, t.left(w))
+	t.set_left(mut w, x)
+	t.set_left(mut y, t.right(w))
+	t.set_right(mut w, y)
 
-	if w.bf == -1 {
-		x.bf = 0
-		y.bf = 1
-	} else if w.bf == 0 {
-		x.bf = 0
-		y.bf = 0
+	if t.bf(w) == -1 {
+		t.set_bf(mut x, 0)
+		t.set_bf(mut y, 1)
+	} else if t.bf(w) == 0 {
+		t.set_bf(mut x, 0)
+		t.set_bf(mut y, 0)
 	} else {
-		x.bf = -1
-		y.bf = 0
+		t.set_bf(mut x, -1)
+		t.set_bf(mut y, 0)
 	}
-	w.bf = 0
+	t.set_bf(mut w, 0)
 }
