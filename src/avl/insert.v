@@ -19,7 +19,7 @@ pub fn (mut t Tree[T]) insert[T](k &T) bool {
 			return false
 		}
 
-		if p.bf != 0 {
+		if t.bf(p) != 0 {
 			y = p
 		}
 
@@ -36,9 +36,9 @@ pub fn (mut t Tree[T]) insert[T](k &T) bool {
 		q = t.parent(p)
 
 		if t.is_left(q, p) {
-			q.bf--
+			t.dec_bf(mut q)
 		} else {
-			q.bf++
+			t.inc_bf(mut q)
 		}
 
 		p = q
@@ -49,16 +49,16 @@ pub fn (mut t Tree[T]) insert[T](k &T) bool {
 }
 
 fn (mut t Tree[T]) balance[T](mut y Node[T]) {
-	if y.bf == -2 {
+	if t.bf(y) == -2 {
 		t.balance_left(mut y)
-	} else if y.bf == 2 {
+	} else if t.bf(y) == 2 {
 		t.balance_right(mut y)
 	}
 }
 
 fn (mut t Tree[T]) balance_left[T](mut y Node[T]) {
 	mut x := t.left(y)
-	if x.bf == -1 {
+	if t.bf(x) == -1 {
 		t.rotate_right(mut y)
 	} else {
 		t.double_rotate_right(mut y)
@@ -67,7 +67,7 @@ fn (mut t Tree[T]) balance_left[T](mut y Node[T]) {
 
 fn (mut t Tree[T]) balance_right[T](mut y Node[T]) {
 	mut x := t.right(y)
-	if x.bf == 1 {
+	if t.bf(x) == 1 {
 		t.rotate_left(mut y)
 	} else {
 		t.double_rotate_left(mut y)

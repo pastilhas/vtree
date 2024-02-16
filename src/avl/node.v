@@ -18,6 +18,7 @@ fn new_node[T](k &T) &Node[T] {
 
 @[inline]
 fn (t Tree[T]) next[T](p &Node[T], d bool) &Node[T] {
+	assert unsafe { p != 0 }
 	return if d {
 		t.left(p)
 	} else {
@@ -40,6 +41,12 @@ fn (t Tree[T]) left[T](p &Node[T]) &Node[T] {
 fn (t Tree[T]) right[T](p &Node[T]) &Node[T] {
 	assert unsafe { p != 0 }
 	return p.right
+}
+
+@[inline]
+fn (t Tree[T]) bf[T](p &Node[T]) i8 {
+	assert unsafe { p != 0 }
+	return p.bf
 }
 
 @[inline]
@@ -86,4 +93,19 @@ fn (mut t Tree[T]) set_parent[T](mut p Node[T], q &Node[T], d bool) {
 	} else {
 		t.parent(p).right = p
 	}
+}
+
+@[inline]
+fn (t Tree[T]) inc_bf[T](mut p Node[T]) {
+	p.bf += 1
+}
+
+@[inline]
+fn (t Tree[T]) dec_bf[T](mut p Node[T]) {
+	p.bf -= 1
+}
+
+@[inline]
+fn (t Tree[T]) set_bf[T](mut p Node[T], i i8) {
+	p.bf = i
 }
