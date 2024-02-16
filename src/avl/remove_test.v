@@ -13,32 +13,24 @@ fn compare_f64(a f64, b f64) int {
 fn test_remove_none() {
 	mut t := new[f64](compare_f64)
 
-	a := f64(1)
-	b := f64(0)
-	c := f64(2)
-	d := f64(1.5)
-	e := f64(8)
+	t.insert(1)
+	t.insert(0)
+	t.insert(2)
+	t.insert(1.5)
 
-	t.insert(&a)
-	t.insert(&b)
-	t.insert(&c)
-	t.insert(&d)
-
-	t.remove(&e)
+	t.remove(8)
 
 	assert unsafe { t.root != 0 }
-	assert t.root.data == &a
+	assert t.root.data == 1
 	assert t.size == 4
 }
 
 fn test_remove_root() {
 	mut t := new[f64](compare_f64)
 
-	a := f64(1)
+	t.insert(1)
 
-	t.insert(&a)
-
-	t.remove(&a)
+	t.remove(1)
 
 	assert unsafe { t.root == 0 }
 	assert t.size == 0
@@ -47,67 +39,52 @@ fn test_remove_root() {
 fn test_remove_root_with_left() {
 	mut t := new[f64](compare_f64)
 
-	a := f64(1)
-	b := f64(0)
+	t.insert(1)
+	t.insert(0)
 
-	t.insert(&a)
-	t.insert(&b)
-
-	t.remove(&a)
+	t.remove(1)
 
 	assert unsafe { t.root != 0 }
-	assert t.root.data == &b
+	assert t.root.data == 0
 	assert t.size == 1
 }
 
 fn test_remove_root_with_right() {
 	mut t := new[f64](compare_f64)
 
-	a := f64(1)
-	b := f64(0)
-	c := f64(2)
+	t.insert(1)
+	t.insert(0)
+	t.insert(2)
 
-	t.insert(&a)
-	t.insert(&b)
-	t.insert(&c)
-
-	t.remove(&a)
+	t.remove(1)
 
 	assert unsafe { t.root != 0 }
-	assert t.root.data == &c
+	assert t.root.data == 2
 	assert t.size == 2
 }
 
 fn test_remove_root_with_right_left() {
 	mut t := new[f64](compare_f64)
 
-	a := f64(1)
-	b := f64(0)
-	c := f64(2)
-	d := f64(1.5)
+	t.insert(1)
+	t.insert(0)
+	t.insert(2)
+	t.insert(1.5)
 
-	t.insert(&a)
-	t.insert(&b)
-	t.insert(&c)
-	t.insert(&d)
-
-	t.remove(&a)
+	t.remove(1)
 
 	assert unsafe { t.root != 0 }
-	assert t.root.data == &d
+	assert t.root.data == 1.5
 	assert t.size == 3
 }
 
 fn test_remove_node() {
 	mut t := new[f64](compare_f64)
 
-	a := f64(0)
-	b := f64(1)
+	t.insert(0)
+	t.insert(1)
 
-	t.insert(&a)
-	t.insert(&b)
-
-	t.remove(&b)
+	t.remove(1)
 
 	assert unsafe { t.root.right == 0 }
 	assert t.size == 1
@@ -116,61 +93,44 @@ fn test_remove_node() {
 fn test_remove_node_with_left() {
 	mut t := new[f64](compare_f64)
 
-	a := f64(1)
-	b := f64(0)
-	c := f64(2)
-	d := f64(-1)
+	t.insert(1)
+	t.insert(0)
+	t.insert(2)
+	t.insert(-1)
 
-	t.insert(&a)
-	t.insert(&b)
-	t.insert(&c)
-	t.insert(&d)
+	t.remove(0)
 
-	t.remove(&b)
-
-	assert t.root.left.data == &d
+	assert t.root.left.data == -1
 	assert t.size == 3
 }
 
 fn test_remove_node_with_right() {
 	mut t := new[f64](compare_f64)
 
-	a := f64(1)
-	b := f64(0)
-	c := f64(2)
-	d := f64(0.5)
+	t.insert(1)
+	t.insert(0)
+	t.insert(2)
+	t.insert(0.5)
 
-	t.insert(&a)
-	t.insert(&b)
-	t.insert(&c)
-	t.insert(&d)
-
-	t.remove(&b)
+	t.remove(0)
 
 	assert unsafe { t.root.left != 0 }
-	assert t.root.left.data == &d
+	assert t.root.left.data == 0.5
 	assert t.size == 3
 }
 
 fn test_remove_node_with_right_left() {
 	mut t := new[f64](compare_f64)
 
-	a := f64(1)
-	b := f64(0)
-	c := f64(-1)
-	d := f64(2)
-	e := f64(1.5)
-	f := f64(1.25)
+	t.insert(1)
+	t.insert(0)
+	t.insert(-1)
+	t.insert(2)
+	t.insert(1.5)
+	t.insert(1.25)
 
-	t.insert(&a)
-	t.insert(&b)
-	t.insert(&c)
-	t.insert(&d)
-	t.insert(&e)
-	t.insert(&f)
+	t.remove(-1)
 
-	t.remove(&c)
-
-	assert t.root.right.data == &e
+	assert t.root.right.data == 1.5
 	assert t.size == 5
 }

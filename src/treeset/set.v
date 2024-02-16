@@ -21,7 +21,6 @@ pub fn (mut s TreeSet[T]) rem[T](k T) bool {
 	return s.tree.remove(k)
 }
 
-
 pub fn (mut s TreeSet[T]) min[T]() !T {
 	return s.tree.min()!
 }

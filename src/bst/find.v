@@ -5,10 +5,10 @@ pub fn (t &BSTree[T]) find[T](k T) ?T {
 
 	mut p := t.root
 	for unsafe { p != 0 } {
-		cmp := t.cmp(k, p.data)
+		cmp := t.cmp(k, t.data(p))
 
 		if cmp == 0 {
-			return p.data
+			return t.data(p)
 		}
 
 		if cmp < 0 {

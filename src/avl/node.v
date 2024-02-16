@@ -13,7 +13,7 @@ mut:
 @[inline]
 fn (t Tree[T]) new_node[T](k T) &Node[T] {
 	return &Node[T]{
-		data: unsafe { k }
+		data: k
 	}
 }
 
@@ -48,6 +48,12 @@ fn (t Tree[T]) right[T](p &Node[T]) &Node[T] {
 fn (t Tree[T]) bf[T](p &Node[T]) i8 {
 	assert unsafe { p != 0 }
 	return p.bf
+}
+
+@[inline]
+fn (t Tree[T]) data[T](p &Node[T]) T {
+	assert unsafe { p != 0 }
+	return p.data
 }
 
 @[inline]

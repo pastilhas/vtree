@@ -26,7 +26,13 @@ pub fn (mut t Tree[T]) remove[T](k T) bool {
 	t.size--
 	mut q := t.parent(p)
 	if unsafe { t.right(p) == 0 } {
-		t.set_parent(mut t.left(p), q, d)
+		if unsafe { t.left(p) != 0 } {
+			t.set_parent(mut t.left(p), q, d)
+		} else if unsafe { q == 0 } {
+			t.root = &Node[T](unsafe { 0 })
+		} else {
+			t.set_child(mut q, t.left(p), d)
+		}
 	} else {
 		mut r := t.right(p)
 		if unsafe { t.left(r) == 0 } {

@@ -27,7 +27,7 @@ fn (t Tree[T]) is_valid[T]() bool {
 
 fn (t Tree[T]) node_is_valid[T](n &Node[T]) bool {
 	l := unsafe { n.left == 0 } || (t.cmp(n.left.data, n.data) < 0 && t.node_is_valid(n.left))
-	r := unsafe { n.right == 0 } || (t.cmp(n.right.data, n.data) < 0 && t.node_is_valid(n.right))
+	r := unsafe { n.right == 0 } || (t.cmp(n.right.data, n.data) > 0 && t.node_is_valid(n.right))
 
 	return l && r
 }

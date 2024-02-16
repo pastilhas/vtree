@@ -10,7 +10,7 @@ pub fn (mut t Tree[T]) min[T]() !T {
 		s = s.left
 	}
 
-	return s.data
+	return t.data(s)
 }
 
 pub fn (mut t Tree[T]) max[T]() !T {
@@ -23,5 +23,5 @@ pub fn (mut t Tree[T]) max[T]() !T {
 		s = s.right
 	}
 
-	return s.data
+	return t.data(s)
 }

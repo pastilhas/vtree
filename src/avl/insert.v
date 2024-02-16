@@ -12,7 +12,7 @@ pub fn (mut t Tree[T]) insert[T](k T) bool {
 	mut p := t.root
 	mut d := false
 	for unsafe { p != 0 } {
-		cmp := t.cmp(k, p.data)
+		cmp := t.cmp(k, t.data(p))
 		d = cmp < 0
 
 		if cmp == 0 {
