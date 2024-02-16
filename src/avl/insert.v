@@ -44,35 +44,24 @@ pub fn (mut t Tree[T]) insert[T](k T) bool {
 		p = q
 	}
 
-	t.balance(mut y)
+	if t.bf(y) == -2 {
+		mut x := t.left(y)
+		if t.bf(x) == -1 {
+			t.rotate_right(mut y)
+			return true
+		}
+
+		t.double_rotate_right(mut y)
+	} else if t.bf(y) == 2 {
+		mut x := t.right(y)
+		if t.bf(x) == 1 {
+			t.rotate_left(mut y)
+			return true
+		}
+
+		t.double_rotate_left(mut y)
+	}
+
 	assert t.is_valid()
 	return true
-}
-
-fn (mut t Tree[T]) balance[T](mut y Node[T]) {
-	if t.bf(y) == -2 {
-		t.balance_left(mut y)
-	} else if t.bf(y) == 2 {
-		t.balance_right(mut y)
-	}
-}
-
-fn (mut t Tree[T]) balance_left[T](mut y Node[T]) {
-	mut x := t.left(y)
-	if t.bf(x) == -1 {
-		t.rotate_right(mut y)
-		return
-	}
-
-	t.double_rotate_right(mut y)
-}
-
-fn (mut t Tree[T]) balance_right[T](mut y Node[T]) {
-	mut x := t.right(y)
-	if t.bf(x) == 1 {
-		t.rotate_left(mut y)
-		return
-	}
-
-	t.double_rotate_left(mut y)
 }

@@ -29,7 +29,7 @@ pub fn (mut t Tree[T]) remove[T](k T) bool {
 		if unsafe { t.left(p) != 0 } {
 			t.set_parent(mut t.left(p), q, d)
 		} else if unsafe { q == 0 } {
-			t.root = &Node[T](unsafe { 0 })
+			t.root = t.left(p)
 		} else {
 			t.set_child(mut q, t.left(p), d)
 		}
