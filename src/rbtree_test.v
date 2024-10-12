@@ -65,6 +65,25 @@ fn test_insert_6() {
 	assert bst.is_valid()
 }
 
+fn test_delete_1() {
+	mut bst := RBTree.new(cmp)
+
+	bst.insert(55)
+	bst.insert(56)
+	bst.insert(40)
+	bst.insert(30)
+	bst.insert(20)
+	bst.insert(25)
+
+	assert bst.size == 6
+	assert bst.is_valid()
+
+	bst.delete(56)
+
+	assert bst.size == 5
+	assert bst.is_valid()
+}
+
 fn cmp(a int, b int) int {
 	return if a > b {
 		1
