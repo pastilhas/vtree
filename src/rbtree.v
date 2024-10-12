@@ -178,72 +178,62 @@ fn (mut t RBTree[T]) delete[T](val T) bool {
 }
 
 fn (mut t RBTree[T]) delete_fix[T](node &Node[T]) {
-	mut n := unsafe { node }
-	for unsafe { n != 0 } && n != t.root && n.color == black {
-		if n == n.parent.left {
-			mut w := n.parent.right
-			if w.color == red {
-				w.color = black
+	mut n := &unsafe { *node }
+	for n != t.root && n.color == black {
+		if unsafe { n.parent != 0 } && n == n.parent.left {
+			mut s := n.parent.right
+			if s.color == red {
+				s.color = black
 				n.parent.color = red
 				t.rotate_left(n.parent)
-				w = n.parent.right
+				s = n.parent.right
 			}
-			if unsafe { w.left == 0 || w.left.color == black } && unsafe { w.right == 0
-				|| w.right.color == black } {
-				w.color = red
+			if s.left.color == black && s.right.color == black {
+				s.color = red
 				n = n.parent
 			} else {
-				if unsafe { w.right == 0 || w.right.color == black } {
-					if unsafe { w.left != 0 } {
-						w.left.color = black
-					}
-					w.color = red
-					t.rotate_right(w)
-					w = n.parent.right
+				if s.right.color == black {
+					s.left.color = black
+					s.color = red
+					t.rotate_right(s)
+					s = n.parent.right
 				}
-				w.color = n.parent.color
+
+				s.color = n.parent.color
 				n.parent.color = black
-				if unsafe { w.right != 0 } {
-					w.right.color = black
-				}
+				s.right.color = black
 				t.rotate_left(n.parent)
 				n = t.root
 			}
 		} else {
-			// Mirror case for right child
-			mut w := n.parent.left
-			if w.color == red {
-				w.color = black
+			mut s := n.parent.left
+			if s.color == red {
+				s.color = black
 				n.parent.color = red
 				t.rotate_right(n.parent)
-				w = n.parent.left
+				s = n.parent.left
 			}
-			if unsafe { w.right == 0 || w.right.color == black } && unsafe { w.left == 0
-				|| w.left.color == black } {
-				w.color = red
+
+			if s.right.color == black && s.left.color == black {
+				s.color = red
 				n = n.parent
 			} else {
-				if unsafe { w.left == 0 || w.left.color == black } {
-					if unsafe { w.right != 0 } {
-						w.right.color = black
-					}
-					w.color = red
-					t.rotate_left(w)
-					w = n.parent.left
+				if s.left.color == black {
+					s.right.color = black
+					s.color = red
+					t.rotate_left(s)
+					s = n.parent.left
 				}
-				w.color = n.parent.color
+
+				s.color = n.parent.color
 				n.parent.color = black
-				if unsafe { w.left != 0 } {
-					w.left.color = black
-				}
+				s.left.color = black
 				t.rotate_right(n.parent)
 				n = t.root
 			}
 		}
 	}
-	if unsafe { n != 0 } {
-		n.color = black
-	}
+	n.color = black
 }
 
 fn (mut t RBTree[T]) transplant[T](n1 &Node[T], n2 &Node[T]) {
