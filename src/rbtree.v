@@ -158,17 +158,20 @@ fn (mut t RBTree[T]) delete[T](val T) bool {
 		node2 = t.min(node.right)
 		og_color = node2.color
 		node3 = node2.right
-		if node2.parent == node {
+		if !t.isnil(node3) && node2.parent == node {
 			node3.parent = node2
 		} else {
 			t.transplant(node2, node2.right)
 			node2.right = node.right
-			node2.right.parent = node2
+			if !t.isnil(node2.right) {
+				node2.right.parent = node2
+			}
 		}
-
 		t.transplant(node, node2)
 		node2.left = node.left
-		node2.left.parent = node2
+		if !t.isnil(node2.left) {
+			node2.left.parent = node2
+		}
 		node2.color = node.color
 	}
 	if !t.isnil(node3) && og_color == black {
@@ -238,15 +241,15 @@ fn (mut t RBTree[T]) delete_fix[T](node &Node[T]) {
 
 fn (mut t RBTree[T]) transplant[T](n1 &Node[T], n2 &Node[T]) {
 	mut u := unsafe { n1 }
-	mut v := unsafe { n2 }
 	if t.isnil(u.parent) {
-		t.root = v
+		t.root = n2
 	} else if u == u.parent.left {
-		u.parent.left = v
+		u.parent.left = n2
 	} else {
-		u.parent.right = v
+		u.parent.right = n2
 	}
-	if !t.isnil(v) {
+	if !t.isnil(n2) {
+		mut v := unsafe { n2 }
 		v.parent = u.parent
 	}
 }
