@@ -131,7 +131,18 @@ fn (mut t RBTree[T]) delete[T](val T) bool {
 fn (mut t RBTree[T]) delete_fixup[T](node &Node[T]) {
 }
 
-fn (mut t RBTree[T]) find[T](val T) ?&Node[T] {
+fn (mut t RBTree[T]) find[T](val T) ?T {
+	for p := t.root; unsafe { p != 0 }; {
+		c := t.cmp(p.val, val)
+		if c == 0 {
+			return p.val
+		}
+		p = if c > 0 {
+			p.left
+		} else {
+			p.right
+		}
+	}
 	return none
 }
 
