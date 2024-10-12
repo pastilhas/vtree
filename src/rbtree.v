@@ -40,7 +40,7 @@ fn (mut t RBTree[T]) inorder[T]() []T {
 }
 
 fn (mut t RBTree[T]) inorder_helper[T](node &Node[T], mut res []T) {
-	if unsafe { node == 0 } {
+	if t.isnil(node) {
 		return
 	}
 
@@ -51,13 +51,13 @@ fn (mut t RBTree[T]) inorder_helper[T](node &Node[T], mut res []T) {
 
 fn (mut t RBTree[T]) insert[T](val T) bool {
 	mut node := Node.new(val)
-	if unsafe { t.root == 0 } {
+	if t.isnil(t.root) {
 		t.root = node
 		t.size += 1
 		return true
 	}
 	mut q := t.root
-	for p := t.root; unsafe { p != 0 }; {
+	for p := t.root; !t.isnil(p); {
 		c := t.cmp(p.val, val)
 		if c == 0 {
 			return false
@@ -81,21 +81,21 @@ fn (mut t RBTree[T]) insert[T](val T) bool {
 }
 
 fn (mut t RBTree[T]) insert_fix[T](node &Node[T]) {
-	mut n := &unsafe { *node }
-	for unsafe { n.parent != 0 } && n.parent.color == red {
+	mut n := unsafe { node }
+	for !t.isnil(n.parent) && n.parent.color == red {
 		mut gp := n.parent.parent
-		if unsafe { gp == 0 } {
+		if t.isnil(gp) {
 			break
 		}
-		if unsafe { gp.right != 0 } && n.parent == gp.right {
+		if !t.isnil(gp.right) && n.parent == gp.right {
 			mut u := gp.left
-			if unsafe { u != 0 } && u.color == red {
+			if !t.isnil(u) && u.color == red {
 				u.color = black
 				n.parent.color = black
 				gp.color = red
 				n = gp
 			} else {
-				if unsafe { n.parent.left != 0 } && n == n.parent.left {
+				if !t.isnil(n.parent.left) && n == n.parent.left {
 					n = n.parent
 					t.rotate_right(n)
 				}
@@ -105,13 +105,13 @@ fn (mut t RBTree[T]) insert_fix[T](node &Node[T]) {
 			}
 		} else {
 			mut u := gp.right
-			if unsafe { u != 0 } && u.color == red {
+			if !t.isnil(u) && u.color == red {
 				u.color = black
 				n.parent.color = black
 				gp.color = red
 				n = gp
 			} else {
-				if unsafe { n.parent.right != 0 } && n == n.parent.right {
+				if !t.isnil(n.parent.right) && n == n.parent.right {
 					n = n.parent
 					t.rotate_left(n)
 				}
@@ -129,7 +129,7 @@ fn (mut t RBTree[T]) delete[T](val T) bool {
 		return false
 	}
 	mut node := t.root.parent
-	for p := t.root; unsafe { p != 0 }; {
+	for p := t.root; !t.isnil(p); {
 		c := t.cmp(p.val, val)
 		if c == 0 {
 			node = p
@@ -141,17 +141,17 @@ fn (mut t RBTree[T]) delete[T](val T) bool {
 			p.right
 		}
 	}
-	if unsafe { node == 0 } {
+	if t.isnil(node) {
 		return false
 	}
 	t.size -= 1
 	mut node3 := node
 	mut node2 := node
 	mut og_color := node2.color
-	if unsafe { node.left == 0 } {
+	if t.isnil(node.left) {
 		node3 = node.right
 		t.transplant(node, node.right)
-	} else if unsafe { node.right == 0 } {
+	} else if t.isnil(node.right) {
 		node3 = node.left
 		t.transplant(node, node.left)
 	} else {
@@ -171,14 +171,14 @@ fn (mut t RBTree[T]) delete[T](val T) bool {
 		node2.left.parent = node2
 		node2.color = node.color
 	}
-	if unsafe { node3 != 0 } && og_color == black {
+	if !t.isnil(node3) && og_color == black {
 		t.delete_fix(node3)
 	}
 	return true
 }
 
 fn (mut t RBTree[T]) delete_fix[T](node &Node[T]) {
-	mut n := &unsafe { *node }
+	mut n := unsafe { node }
 	for n != t.root && n.color == black {
 		if unsafe { n.parent != 0 } && n == n.parent.left {
 			mut s := n.parent.right
@@ -239,20 +239,20 @@ fn (mut t RBTree[T]) delete_fix[T](node &Node[T]) {
 fn (mut t RBTree[T]) transplant[T](n1 &Node[T], n2 &Node[T]) {
 	mut u := unsafe { n1 }
 	mut v := unsafe { n2 }
-	if unsafe { u.parent == 0 } {
+	if t.isnil(u.parent) {
 		t.root = v
 	} else if u == u.parent.left {
 		u.parent.left = v
 	} else {
 		u.parent.right = v
 	}
-	if unsafe { v != 0 } {
+	if !t.isnil(v) {
 		v.parent = u.parent
 	}
 }
 
 fn (mut t RBTree[T]) find[T](val T) ?T {
-	for p := t.root; unsafe { p != 0 }; {
+	for p := t.root; !t.isnil(p); {
 		c := t.cmp(p.val, val)
 		if c == 0 {
 			return p.val
@@ -267,14 +267,14 @@ fn (mut t RBTree[T]) find[T](val T) ?T {
 }
 
 fn (mut t RBTree[T]) rotate_left[T](node &Node[T]) {
-	mut n := &unsafe { *node }
+	mut n := unsafe { node }
 	mut r := node.right
 	n.right = r.left
-	if unsafe { r.left != 0 } {
+	if !t.isnil(r.left) {
 		r.left.parent = n
 	}
 	r.parent = n.parent
-	if unsafe { n.parent == 0 } {
+	if t.isnil(n.parent) {
 		t.root = r
 	} else if n == n.parent.left {
 		n.parent.left = r
@@ -286,14 +286,14 @@ fn (mut t RBTree[T]) rotate_left[T](node &Node[T]) {
 }
 
 fn (mut t RBTree[T]) rotate_right[T](node &Node[T]) {
-	mut n := &unsafe { *node }
+	mut n := unsafe { node }
 	mut l := n.left
 	n.left = l.right
-	if unsafe { l.right != 0 } {
+	if !t.isnil(l.right) {
 		l.right.parent = n
 	}
 	l.parent = n.parent
-	if unsafe { n.parent == 0 } {
+	if t.isnil(n.parent) {
 		t.root = l
 	} else if n == n.parent.right {
 		n.parent.right = l
@@ -306,8 +306,12 @@ fn (mut t RBTree[T]) rotate_right[T](node &Node[T]) {
 
 fn (t RBTree[T]) min[T](node &Node[T]) &Node[T] {
 	mut n := unsafe { node }
-	for unsafe { n.left != 0 } {
+	for !t.isnil(n.left) {
 		n = n.left
 	}
 	return n
+}
+
+fn (t RBTree[T]) isnil[T](node &Node[T]) bool {
+	return unsafe { node == 0 }
 }
